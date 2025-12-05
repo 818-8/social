@@ -1,6 +1,6 @@
 import React from 'react';
 import { Message, MessageRole } from '../types';
-import { User, Bot, Sparkles } from 'lucide-react';
+import { User, Bot, Sparkles, AlertTriangle } from 'lucide-react';
 
 interface ChatMessageProps {
   message: Message;
@@ -11,10 +11,22 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
   const isSystem = message.role === MessageRole.SYSTEM;
 
   if (isSystem) {
+    const isError = message.text.includes("错误") || message.text.includes("Error");
+    
     return (
       <div className="flex justify-center my-4 animate-fade-in">
-        <div className="bg-amber-50 border border-amber-200 text-amber-800 text-sm px-4 py-2 rounded-lg flex items-start gap-2 max-w-xs md:max-w-md shadow-sm">
-          <Sparkles className="w-4 h-4 mt-0.5 flex-shrink-0 text-amber-500" />
+        <div className={`
+          text-sm px-4 py-2 rounded-lg flex items-start gap-2 max-w-xs md:max-w-md shadow-sm
+          ${isError 
+            ? 'bg-red-50 border border-red-200 text-red-800' 
+            : 'bg-amber-50 border border-amber-200 text-amber-800'
+          }
+        `}>
+          {isError ? (
+            <AlertTriangle className="w-4 h-4 mt-0.5 flex-shrink-0 text-red-500" />
+          ) : (
+            <Sparkles className="w-4 h-4 mt-0.5 flex-shrink-0 text-amber-500" />
+          )}
           <p>{message.text}</p>
         </div>
       </div>
@@ -40,7 +52,6 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
             >
             {message.text}
             </div>
-            {/* Attached Feedback (if any, stored on the message object itself, usually hidden or shown via toggle, but here we show system messages separately) */}
         </div>
       </div>
     </div>

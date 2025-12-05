@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Scenario, Message, MessageRole } from '../types';
 import { generateReply, getCoachFeedback } from '../services/geminiService';
 import ChatMessage from './ChatMessage';
-import { ArrowLeft, Send, Sparkles, Loader2 } from 'lucide-react';
+import { ArrowLeft, Send, Sparkles, Loader2, AlertCircle } from 'lucide-react';
 
 interface ChatScreenProps {
   scenario: Scenario;
@@ -52,6 +52,7 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ scenario, onBack, onComplete })
     try {
       // 1. Get AI Persona Reply
       const replyText = await generateReply(scenario, updatedMessages);
+      
       const aiMsg: Message = {
         id: (Date.now() + 1).toString(),
         role: MessageRole.MODEL,
@@ -60,23 +61,31 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ scenario, onBack, onComplete })
 
       setMessages(prev => [...prev, aiMsg]);
 
-      // 2. Get Coach Feedback (Optional: could be triggered manually, but doing it auto for "Coach" feel)
-      setIsAnalyzing(true);
-      const feedback = await getCoachFeedback(scenario, userText, updatedMessages);
-      
-      const feedbackMsg: Message = {
-        id: (Date.now() + 2).toString(),
-        role: MessageRole.SYSTEM,
-        text: feedback,
-      };
-      
-      setIsAnalyzing(false);
-      setMessages(prev => {
-        return [...prev, feedbackMsg];
-      });
+      // 2. Get Coach Feedback (Only if reply was successful)
+      if (!replyText.includes("错误")) {
+        setIsAnalyzing(true);
+        const feedback = await getCoachFeedback(scenario, userText, updatedMessages);
+        
+        const feedbackMsg: Message = {
+          id: (Date.now() + 2).toString(),
+          role: MessageRole.SYSTEM,
+          text: feedback,
+        };
+        
+        // Use functional update to ensure we have the latest state
+        setMessages(prev => [...prev, feedbackMsg]);
+        setIsAnalyzing(false);
+      }
 
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
+      // Show error in chat bubble so user knows what happened
+      const errorMsg: Message = {
+        id: (Date.now() + 3).toString(),
+        role: MessageRole.SYSTEM,
+        text: `⚠️ 发生错误: ${error.message || "无法连接到 AI 服务"}。请检查网络或 API Key 配置。`,
+      };
+      setMessages(prev => [...prev, errorMsg]);
     } finally {
       setIsLoading(false);
       setIsAnalyzing(false);

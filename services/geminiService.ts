@@ -10,7 +10,11 @@ const getAI = () => {
   if (!apiKey) {
     throw new Error("API Key not found in environment variables");
   }
-  return new GoogleGenAI({ apiKey });
+  // Initialize with apiKey and optional baseUrl (for proxies)
+  return new GoogleGenAI({ 
+    apiKey,
+    baseUrl: process.env.API_BASE_URL || undefined
+  });
 };
 
 export const generateReply = async (

@@ -13,6 +13,8 @@ export default defineConfig(({ mode }) => {
       // This is critical for the app to work on Netlify.
       // It replaces `process.env.API_KEY` in the code with the actual value from the build environment.
       'process.env.API_KEY': JSON.stringify(env.API_KEY),
+      // Support for custom Base URL (useful for proxies)
+      'process.env.API_BASE_URL': JSON.stringify(env.API_BASE_URL || ''),
     },
   };
 });

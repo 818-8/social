@@ -27,13 +27,16 @@ const Dashboard: React.FC<DashboardProps> = ({ onScenarioSelect }) => {
           <p className="text-slate-500 text-lg mb-6">拥有你的专属 AI 教练，掌握谈话的艺术。</p>
           
           {/* Daily Tip Card */}
-          <div className="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl p-5 text-white shadow-lg flex items-start gap-4">
-             <div className="p-2 bg-white/20 rounded-lg">
+          <div className="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl p-5 text-white shadow-lg flex items-start gap-4 transition-all duration-300">
+             <div className="p-2 bg-white/20 rounded-lg flex-shrink-0">
                 <Zap className="w-6 h-6 text-yellow-300" />
              </div>
              <div>
                  <h3 className="font-bold text-sm uppercase tracking-wider text-indigo-100 mb-1">每日洞察</h3>
-                 <p className="font-medium text-lg leading-snug">"{tip}"</p>
+                 <p className="font-medium text-lg leading-snug break-words">
+                   {/* Automatically remove quotes if API adds them, then add our own styled ones if needed, or just display text */}
+                   {tip.replace(/^['"]|['"]$/g, '')}
+                 </p>
              </div>
           </div>
         </div>
@@ -42,7 +45,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onScenarioSelect }) => {
       {/* Stats (Mock) */}
       <div className="max-w-5xl mx-auto w-full px-6 py-6 grid grid-cols-2 md:grid-cols-4 gap-4">
         <div className="bg-white p-4 rounded-lg border border-slate-100 shadow-sm flex items-center gap-3">
-            <div className="p-2 bg-blue-50 text-blue-600 rounded-full">
+            <div className="p-2 bg-blue-50 text-blue-600 rounded-full flex-shrink-0">
                 <MessageSquare size={18} />
             </div>
             <div>
@@ -51,7 +54,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onScenarioSelect }) => {
             </div>
         </div>
         <div className="bg-white p-4 rounded-lg border border-slate-100 shadow-sm flex items-center gap-3">
-            <div className="p-2 bg-orange-50 text-orange-600 rounded-full">
+            <div className="p-2 bg-orange-50 text-orange-600 rounded-full flex-shrink-0">
                 <Trophy size={18} />
             </div>
             <div>
